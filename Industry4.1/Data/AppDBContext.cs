@@ -1,0 +1,14 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Industry4._1.Model;
+
+namespace Industry4._1.Data
+{
+    public class AppDBContext:DbContext
+    {
+        public AppDBContext(DbContextOptions options) : base(options)
+        {
+        }
+
+        public DbSet<Machine> Machines {  get; set; }
+    }
+}
