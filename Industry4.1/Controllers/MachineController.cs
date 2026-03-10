@@ -142,5 +142,46 @@ namespace Industry4._1.Controllers
             });
         }
 
+        [HttpPost("Adduser")]
+
+
+        public IActionResult Adduser(CreateUserDto dto)
+        {
+            var res = _machineservice.AddUser(dto);
+            return Ok(new
+            {
+                Status = true,
+                Message = "User created Succesfully",
+                Data = res
+            });
+        }
+        [HttpPost("Login")]
+        public IActionResult Login(LoginAndMachine dto)
+        {
+            var case1 = _machineservice.Login(dto);
+            var case2 = _machineservice.LoginMachine(dto);
+            if(case1 != null)
+            {
+                return Ok(new
+                {
+                    Status = 200,
+                    Message = "Login Seccusfull",
+                    Machine = case1
+                });
+            }
+            if (case2 != null) {
+                return Ok(new
+                {
+                    Status = 200,
+                    Message = "Machine Details are",
+                    Machine = case2
+                });
+            
+            }
+            if (case1 == null) { 
+            return BadRequest();
+            }
+            return BadRequest();
+        }
     }
 }

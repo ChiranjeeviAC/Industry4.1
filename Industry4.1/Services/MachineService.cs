@@ -24,6 +24,7 @@ namespace Industry4._1.Services
                 MachineCode = machinedto.MachineCode,
                 MachineName = machinedto.MachineName,
                 IsActive = machinedto.IsActive,
+                employeesWorking = machinedto.employeesWorking       
             };
 
             _context.Machines.Add(machine);
@@ -118,10 +119,59 @@ namespace Industry4._1.Services
             machine.MachineCode = dto.MachineCode;
             machine.MachineName = dto.MachineName;
             machine.IsActive = dto.IsActive;
+            machine.employeesWorking = dto.employeesWorking;
 
             _context.SaveChanges();
             return machine;
 
+
+        }
+
+        public Usre AddUser(CreateUserDto dto)
+        {
+            var user = new Usre
+            {
+                userName = dto.userName,
+                password = dto.password 
+            };
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return user;
+        }
+
+
+        public List<Login> Login(LoginAndMachine dto)
+        {
+            var result = _context.Users.FirstOrDefault(i => i.userName == dto.userName && i.password == dto.password);
+           
+
+            if (dto.mId == 0 && result != null)
+
+            {
+                var machines = _context.Machines
+       .Select(m => new Login
+       {
+           machineId = m.Id
+       })
+       .ToList();
+
+
+                return machines;
+            }
+            return null;
+
+        }
+
+        public Machine LoginMachine(LoginAndMachine dto)
+        {
+            var machines = _context.Machines.FirstOrDefault(m => m.Id == dto.mId);
+            if (machines != null && dto.userName == "" && dto.password == "")
+            {
+                return machines;
+            }
+            return null;
+
+           
 
         }
     } 

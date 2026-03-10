@@ -7,5 +7,6 @@
 
         public string MachineName { get; set; }
         public bool IsActive { get; set; }
+        public int employeesWorking { get; set; }
     }
 }

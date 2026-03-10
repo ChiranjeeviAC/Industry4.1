@@ -19,6 +19,9 @@ namespace Industry4._1.Interfaces
 
         public List<string> GetAllMachinesCodeonly();
         public List<MachineNameeDto> GetAllMachinesName();
-
+        public Usre AddUser(CreateUserDto dto);
+        public List<Login> Login(LoginAndMachine dto);
+        public Machine LoginMachine(LoginAndMachine dto);
     }
+
 }
