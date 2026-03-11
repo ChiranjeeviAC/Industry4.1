@@ -22,6 +22,10 @@ namespace Industry4._1
                     builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<IMachineService, MachineService>();
+            builder.Services.AddScoped<IUserService, AppUserService>();
+            builder.Services.AddScoped<IShiftService, ShiftService>();
+
+
 
             var app = builder.Build();
 

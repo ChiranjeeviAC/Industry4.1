@@ -1,4 +1,5 @@
-﻿using Industry4._1.DTOs;
+﻿using Industry4._1.DTOs.LogicHandeling;
+using Industry4._1.DTOs.MachineDto;
 using Industry4._1.Model;
 using Microsoft.AspNetCore.Mvc;
 
