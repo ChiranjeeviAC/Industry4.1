@@ -14,5 +14,6 @@ namespace Industry4._1.Data
         public DbSet<UserAuthDelails> UserAuthDelails { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Shift> Shifts { get; set; }
+        public DbSet<ProductionEntry> ProductionEntries { get; set; }
     }
 }

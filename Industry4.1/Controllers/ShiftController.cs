@@ -21,7 +21,15 @@ namespace Industry4._1.Controllers
         [HttpPost("AddShift")]
         public IActionResult AddShift(ShiftCreateDto dto)
         {
-
+            var checkStart = _shiftservice.checkStartTime(dto.StartTime, dto.EndTime);
+            if( checkStart == false)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = $"Shift Already starts from {dto.StartTime} and end time {dto.EndTime}"
+                });
+            }
 
             var shift = _shiftservice.AddShift(dto);
 
@@ -76,7 +84,60 @@ namespace Industry4._1.Controllers
             });
         }
 
+        [HttpPatch]
+        public IActionResult UpdateShift(Shift dto)
+        {
+            var result = _shiftservice.UpdateShift(dto);
+            if (result == null)
+            {
+                return BadRequest(new
+                {
+                    Status = true,
+                    Message = $"Shift Not Found with Id: {dto.Id}"
+                });
+            }
+            return Ok(new
+            {
+                Status = true,
+                Message = "Shift Updated Secussfully",
+                Data = result
+            });
+        }
 
 
+        [HttpDelete]
+        public IActionResult DeleteShift(int Id)
+        {
+            var result = _shiftservice.DeleteShift(Id);
+            if (result == null)
+            {
+                return BadRequest(new
+                {
+                    Status = true,
+                    Message = $"Shift Not Found with Id: {Id}"
+                });
+            }
+            return Ok(new
+            {
+                Status = true,
+                Message = "Shift Deleted Secussfully",
+                Data = result
+            });
+        }
+
+
+
+        [HttpGet("ShiftWithSchedule")]
+        public IActionResult ShiftWithSchedule() {
+            var res = _shiftservice.ShiftWithSchedule();
+            return Ok(res);
+        }
+
+        [HttpGet("GetShiftName")]
+        public IActionResult GetShiftName()
+        {
+            var res = _shiftservice.GetShiftName();
+            return Ok(res);
+        }
     }
 }

@@ -13,4 +13,14 @@
 
 
     }
+
+    public class GetShiftNameResponse
+    {
+
+        public string ShiftName { get; set; }
+
+
+        
+
+    }
 }
