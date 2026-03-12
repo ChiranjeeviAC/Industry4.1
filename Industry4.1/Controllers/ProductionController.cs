@@ -2,6 +2,7 @@
 using Industry4._1.Interfaces;
 using Industry4._1.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,30 +37,21 @@ namespace Industry4._1.Controllers
                     );
             }
 
-            var machine = _productionservice.checkMachine(dto.MachineId);
+            var machine = _productionservice.checkMachine(dto.MachineCode);
             if (machine == true)
                 return BadRequest("Invalid Machine");
 
 
-            var shift = _productionservice.checkMachine(dto.ShiftId);
+            var shift = _productionservice.checkMachine(dto.ShiftName);
             if (shift == null)
                 return BadRequest("Invalid Shift");
 
 
-            var user = _productionservice.checkUser(dto.UserId);
+            var user = _productionservice.checkUser(dto.UserEmployeeId);
             if (user == null)
                 return BadRequest("Invalid User");
 
-            var production = new ProductionEntry
-            {
-                MachineId = dto.MachineId,
-                JobId = dto.JobId,
-                ShiftId = dto.ShiftId,
-                UserId = dto.UserId,
-                OkParts = dto.OkParts,
-                NcParts = dto.NcParts,
-                EntryTime = DateTime.Now
-            };
+            var production = _productionservice.AddProduction(dto);
 
             return Ok(new
             {
@@ -83,24 +75,24 @@ namespace Industry4._1.Controllers
         }
 
 
-        [HttpGet("Shift/{ShiftId}")]
-        public IActionResult GetByShift(int shiftId)
+        [HttpGet("Shift/{ShiftName}")]
+        public IActionResult GetByShift(string shiftName)
         {
-            var result = _productionservice.GetByShift(shiftId);
+            var result = _productionservice.GetByShift(shiftName);
 
             if (result == null)
             {
                 return BadRequest(new
                 {
                     Status = false,
-                    Message = $"No Production entry at Shift fount of ShiftId: {shiftId}"
+                    Message = $"No Production entry at Shift fount of ShiftId: {shiftName}"
                 });
             }
 
             return Ok(new
             {
                 Status = true,
-                Message = $" Production entry at Shift of ShiftId: {shiftId}",
+                Message = $"Production entry at Shift of ShiftId: {shiftName}",
                 Data = result
             });
         }
@@ -147,6 +139,26 @@ namespace Industry4._1.Controllers
             });
         }
 
+        [HttpPatch("UpdateProductionEntry")]
+        public IActionResult UpdateProductionEntry(UpdateProductionDto dto)
+        {
+            var res = _productionservice.UpdateProduction(dto);
+            if (res == null)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "JobId not Found"
+                });
+            }
+            return Ok(new
+            {
+                Status = true,
+                Message = "Production Entry updated secussfully",
+                Data = res
+            });
+        }
+
 
         [HttpGet("TotalOKCount")]
         public IActionResult TotalOKCount()
@@ -170,9 +182,9 @@ namespace Industry4._1.Controllers
 
 
         [HttpGet("TotalOKCountFromMachine")]
-        public IActionResult TotalOKCountFromMachine(int machineId)
+        public IActionResult TotalOKCountFromMachine(string machineCode)
         {
-            var totalOk = _productionservice.TotalOKCountFromMachine(machineId);
+            var totalOk = _productionservice.TotalOKCountFromMachine(machineCode);
 
             return Ok(new
             {
@@ -183,9 +195,9 @@ namespace Industry4._1.Controllers
         }
 
         [HttpGet("TotalOkNcCountFromMachineFromTodate")]
-        public IActionResult TotalOKCountFromMachinedate(int machineId, DateTime from, DateTime to)
+        public IActionResult TotalOKCountFromMachinedate(string machineCode, DateTime from, DateTime to)
         {
-            var production = _productionservice.TotalOKCountFromMachinedate(machineId, from, to);
+            var production = _productionservice.TotalOKCountFromMachinedate(machineCode, from, to);
 
             return Ok(new
             {
@@ -213,5 +225,151 @@ namespace Industry4._1.Controllers
             });
         }
 
+
+        [HttpGet("operator-performance")]
+        public IActionResult operatorperformance()
+        {
+            var result = _productionservice.operatorperformance();
+
+
+            if (result.Count == 0)
+            {
+                return NoContent();
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "Details of Production According to User",
+                Data = result
+            });
+        }
+
+
+
+        [HttpGet("shift-report/{shiftId}")]
+        public IActionResult ShiftReport(string shiftName)
+        {
+            var result = _productionservice.ShiftReport(shiftName);
+
+            if (!result.Any())
+                return NoContent();
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "Details of Production According to Shift",
+                Data = result
+            });
+        }
+
+        [HttpGet("daily")]
+        public IActionResult daily(DateTime date)
+        {
+
+
+            var production = _productionservice.daily( date);
+
+            if (production == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "Details of Production According to Specific Date",
+                Data = production
+            });
+        }
+
+
+        [HttpGet("top-machine")]
+        public IActionResult TopMachine()
+        {
+            var result = _productionservice.TopMachine();
+
+            if (result == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "Top performing machine",
+                Data = result
+            });
+        }
+
+
+        [HttpPost("Production-by-Machine-User-PerCycle")]
+        public IActionResult ProductionbyMachineUserPerCycle(GetMachineandUserProduction dto)
+        {
+
+
+            var production = _productionservice.ProductionbyMachineUserPerCycle( dto );
+
+            if (production == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = "Data fetch Secussfully",
+                Data = production
+            });
+        }
+
+        [HttpPost("MachineUser")]
+        public IActionResult MachineUser(MachineUser dto)
+        {
+            var result = _productionservice.MachineUser1( dto );
+
+
+            var result1 = _productionservice.MachineUser2(dto);
+
+
+            if (result1 != null)
+            {
+                return Ok(new
+                {
+                    Status = true,
+                    Message = "Operstor Details feched successfully",
+                    Data = result1
+                });
+            }
+
+
+            if (dto.EmployeeId != "" && result1 == null)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = $"Operator with operatorId: {dto.EmployeeId} Not found for Machine with machineId: {dto.MachineCode} ",
+
+                });
+            }
+
+
+
+            if (result.Count == 0)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = "Machine Not found"
+                });
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = $"Number of Operators work for Machine of machineID: {dto.MachineCode} are {result.Count}",
+                Data = result
+            });
+        }
     }
 }

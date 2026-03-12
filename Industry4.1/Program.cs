@@ -12,7 +12,7 @@ namespace Industry4._1
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 🔹 Register Services FIRST
+            
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -24,6 +24,7 @@ namespace Industry4._1
             builder.Services.AddScoped<IMachineService, MachineService>();
             builder.Services.AddScoped<IUserService, AppUserService>();
             builder.Services.AddScoped<IShiftService, ShiftService>();
+            builder.Services.AddScoped<IProductionService, ProductionService>();
 
 
 

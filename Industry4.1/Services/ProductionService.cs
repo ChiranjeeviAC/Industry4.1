@@ -1,11 +1,13 @@
 ﻿using Industry4._1.Data;
 using Industry4._1.DTOs;
+using Industry4._1.Interfaces;
 using Industry4._1.Model;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Industry4._1.Services
 {
-    public class ProductionService
+    public class ProductionService : IProductionService
     {
         private readonly AppDBContext _context;
 
@@ -19,23 +21,23 @@ namespace Industry4._1.Services
         {
             var ProdEntryAlredy = _context.ProductionEntries.Where(i => i.JobId == JobId).FirstOrDefault();
 
-            return (ProdEntryAlredy != null);
+            return (ProdEntryAlredy == null);
         }
-        public Boolean checkMachine(int MachineId)
+        public Boolean checkMachine(string MachineCode)
         {
-            var machine = _context.Machines.FirstOrDefault(m => m.Id == MachineId);
+            var machine = _context.Machines.FirstOrDefault(m => m.MachineCode == MachineCode);
             return (machine == null);
         }
 
-        public Boolean checkShift(int ShiftId)
+        public Boolean checkShift(string ShiftName)
         {
-            var machine = _context.Shifts.FirstOrDefault(m => m.Id == ShiftId);
+            var machine = _context.Shifts.FirstOrDefault(m => m.ShiftName == ShiftName);
             return (machine == null);
         }
 
-        public Boolean checkUser(int UserId)
+        public Boolean checkUser(string EmployeeId)
         {
-            var machine = _context.AppUsers.FirstOrDefault(m => m.Id == UserId);
+            var machine = _context.AppUsers.FirstOrDefault(m => m.EmployeeId == EmployeeId);
             return (machine == null);
         }
 
@@ -44,10 +46,10 @@ namespace Industry4._1.Services
         {
             var production = new ProductionEntry
             {
-                MachineId = dto.MachineId,
+                MachineCode = dto.MachineCode,
                 JobId = dto.JobId,
-                ShiftId = dto.ShiftId,
-                UserId = dto.UserId,
+                ShiftName = dto.ShiftName,
+                UserEmployeeId = dto.UserEmployeeId,
                 OkParts = dto.OkParts,
                 NcParts = dto.NcParts,
                 EntryTime = DateTime.Now
@@ -60,36 +62,38 @@ namespace Industry4._1.Services
         }
 
 
-        
+
         public List<ProductionResponseDto> Get()
         {
             var result = (
                 from p in _context.ProductionEntries
-                join m in _context.Machines on p.MachineId equals m.Id
-                join u in _context.AppUsers on p.UserId equals u.Id
-                join s in _context.Shifts on p.ShiftId equals s.Id
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+                join s in _context.Shifts on p.ShiftName equals s.ShiftName
                 select new ProductionResponseDto
                 {
-                   Id= p.Id,
+                    Id = p.Id,
                     MachineName = m.MachineName,
                     ShiftName = s.ShiftName,
                     EmployeeId = u.EmployeeId,
-                    OkParts=p.OkParts,
+                    OkParts = p.OkParts,
                     NcParts = p.NcParts,
                     EntryTime = p.EntryTime,
-                    JobId= p.JobId
+                    JobId = p.JobId
                 }
                 ).ToList();
             return result;
         }
 
 
-        
-        public List<ProductionEntry> GetByShift(int shiftId) { 
-        
-            var result = _context.ProductionEntries.Where(i => i.ShiftId == shiftId).ToList();
 
-            if (result.Count == 0) {
+        public List<ProductionEntry> GetByShift(string shiftName)
+        {
+
+            var result = _context.ProductionEntries.Where(i => i.ShiftName == shiftName).ToList();
+
+            if (result.Count == 0)
+            {
 
                 return null;
             }
@@ -97,7 +101,7 @@ namespace Industry4._1.Services
             return result;
         }
 
-        
+
         public ProductionEntry GetByProductId(int PrudID)
         {
             var result = _context.ProductionEntries.Where(i => i.Id == PrudID).FirstOrDefault();
@@ -110,7 +114,7 @@ namespace Industry4._1.Services
             return result;
         }
 
-        
+
         public ProductionEntry DeleteProduction(string jobId)
         {
             var res = _context.ProductionEntries.Where(i => i.JobId == jobId).FirstOrDefault();
@@ -118,10 +122,29 @@ namespace Industry4._1.Services
             {
                 return null;
             }
+            _context.ProductionEntries.Remove(res);
+            _context.SaveChanges();
             return res;
         }
 
-        
+        public ProductionEntry UpdateProduction(UpdateProductionDto dto)
+        {
+            var res = _context.ProductionEntries.Where(i => i.JobId == dto.JobId).FirstOrDefault();
+            if (res == null)
+            {
+                return null;
+            }
+            res.ShiftName = dto.ShiftName;
+            res.MachineCode = dto.MachineCode;
+            res.UserEmployeeId = dto.UserEmployeeId;
+            res.OkParts = dto.OkParts;
+            res.NcParts = dto.NcParts;
+            res.EntryTime = dto.EntryTime;
+            _context.SaveChanges();
+            return res;
+        }
+
+
         public int TotalOKCount()
         {
             var totalOk = _context.ProductionEntries.Sum(p => p.OkParts);
@@ -134,26 +157,26 @@ namespace Industry4._1.Services
             return totalNc;
         }
 
-        
-        public TotalOKCountFromMachineResponse TotalOKCountFromMachine(int machineId)
+
+        public TotalOKCountFromMachineResponse TotalOKCountFromMachine(string machineCode)
         {
-            var totalOk = _context.ProductionEntries.Where(p => p.MachineId == machineId).ToList();
+            var totalOk = _context.ProductionEntries.Where(p => p.MachineCode == machineCode).ToList();
             var totalokM = totalOk.Sum(p => p.OkParts);
             var totalncM = totalOk.Sum(p => p.NcParts);
             return (new TotalOKCountFromMachineResponse
             {
-                machineId = machineId,
+                MachineCode = machineCode,
                 TotalOkParts = totalokM,
                 TotalNcParts = totalncM,
                 TotalProduction = totalokM + totalncM
             });
         }
 
-        
-        public TotalOKCountFromMachinedateResponse TotalOKCountFromMachinedate(int machineId, DateTime from, DateTime to)
+
+        public TotalOKCountFromMachinedateResponse TotalOKCountFromMachinedate(string machineCode, DateTime from, DateTime to)
         {
             var production = _context.ProductionEntries
-        .Where(p => p.MachineId == machineId
+        .Where(p => p.MachineCode == machineCode
         && p.EntryTime >= from
         && p.EntryTime <= to)
         .ToList();
@@ -162,7 +185,7 @@ namespace Industry4._1.Services
             var totalncM = production.Sum(p => p.NcParts);
             return (new TotalOKCountFromMachinedateResponse
             {
-                machineId = machineId,
+                MachineCode = machineCode,
                 fromDate = from,
                 toDate = to,
                 TotalOkParts = totalokM,
@@ -171,12 +194,12 @@ namespace Industry4._1.Services
             });
         }
 
-        [HttpGet("machine-summary")]
+        
         public List<machinesummaryResponse> machinesummary()
         {
             var result = (
         from p in _context.ProductionEntries
-        join m in _context.Machines on p.MachineId equals m.Id
+        join m in _context.Machines on p.MachineCode equals m.MachineCode
         group p by new
         {
             m.MachineCode,
@@ -199,7 +222,211 @@ namespace Industry4._1.Services
 
             return result;
         }
-         
-    
+
+        
+        public List<operatorperformanceDto> operatorperformance()
+        {
+            var result = (
+        from p in _context.ProductionEntries
+        join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+        group p by new
+        {
+            u.EmployeeId
+
+        }
+        into g
+        select new operatorperformanceDto
+        {
+            EmployeeId = g.Key.EmployeeId,
+            TotalOKParts = g.Sum(x => x.OkParts),
+            TotalNCParts = g.Sum(x => x.NcParts),
+            TotalParts = g.Sum(x => x.OkParts + x.NcParts),
+            Performance = (g.Sum(x => x.OkParts) / (double)g.Sum(x => x.OkParts + x.NcParts)) * 100
+        }).ToList();
+
+
+            if (result.Count == 0)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
+
+
+       
+        public List<resultResponseDto> ShiftReport(string shiftName)
+        {
+            var result = (
+                from p in _context.ProductionEntries
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+                join s in _context.Shifts on p.ShiftName equals s.ShiftName
+                where p.ShiftName == shiftName
+                group p by new
+                {
+                    p.ShiftName,
+                    
+                    m.MachineName,
+                    u.EmployeeId
+                }
+                into g
+                select new resultResponseDto
+                {
+                    
+                    ShiftName = g.Key.ShiftName,
+                    MachineName = g.Key.MachineName,
+                    EmployeeID = g.Key.EmployeeId,
+                    TotalOKParts = g.Sum(x => x.OkParts),
+                    TotalNCParts = g.Sum(x => x.NcParts),
+                    TotalParts = g.Sum(x => x.OkParts + x.NcParts),
+                    Performance = (g.Sum(x => x.OkParts) /
+                                  (double)g.Sum(x => x.OkParts + x.NcParts)) * 100
+                }).ToList();
+
+            if (!result.Any())
+                return null;
+
+            return result;
+        }
+
+        
+        public dailyResponseDto daily(DateTime date)
+        {
+            var start = date.Date;
+            var end = start.AddDays(1);
+
+            var production = _context.ProductionEntries
+        .Where(p => p.EntryTime >= start && p.EntryTime < end)
+        .ToList();
+
+            if (production == null)
+            {
+                return null;
+            }
+
+            return (new dailyResponseDto
+            {
+
+                Date = date,
+                TotalOkParts = production.Sum(p => p.OkParts),
+                TotalNcParts = production.Sum(p => p.NcParts),
+                TotalProduction = production.Sum(p => p.OkParts) + production.Sum(p => p.NcParts)
+            });
+        }
+
+        
+        public TopMachineResponseDto TopMachine()
+        {
+            var result = (
+                from p in _context.ProductionEntries
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                group p by new
+                {
+                    m.MachineCode,
+                    m.MachineName
+                }
+                into g
+                select new TopMachineResponseDto
+                {
+                    MachineCode = g.Key.MachineCode,
+                    MachineName = g.Key.MachineName,
+                    TotalProduction = g.Sum(x => x.OkParts + x.NcParts)
+                }
+            )
+            .OrderByDescending(x => x.TotalProduction)
+            .FirstOrDefault();
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return result;
+        }
+
+
+        
+        public ProductionbyMachineUserPerCycleResponseDto ProductionbyMachineUserPerCycle(GetMachineandUserProduction dto)
+        {
+
+
+            var production = _context.ProductionEntries
+            .Where(p => p.MachineCode == dto.MachineCode && p.UserEmployeeId == dto.EmployeeId
+            && p.EntryTime >= dto.from
+            && p.EntryTime <= dto.to)
+            .ToList();
+
+            if (production.Count == 0)
+            {
+                return null;
+            }
+
+            return (new ProductionbyMachineUserPerCycleResponseDto
+            {
+                MachineCode = dto.MachineCode,
+                EmployeeId = dto.EmployeeId,
+                fromDate = dto.from,
+                toDate = dto.to,
+                TotalOkParts = production.Sum(p => p.OkParts),
+                TotalNcParts = production.Sum(p => p.NcParts),
+                TotalProduction = production.Sum(p => p.OkParts) + production.Sum(p => p.NcParts)
+            });
+        }
+
+        public List<MachineUser1ResponseDto> MachineUser1(MachineUser dto)
+        {
+            var result = (
+            from p in _context.ProductionEntries
+            join m in _context.Machines on p.MachineCode equals m.MachineCode
+            join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+            where m.MachineCode == dto.MachineCode
+            group p by new
+            {
+                u.EmployeeId
+            }
+            into g
+            select new MachineUser1ResponseDto
+            {
+
+                OperatorID = g.Key.EmployeeId
+
+            }
+            ).ToList();
+
+            return result;
+        }
+
+
+
+        public MachineUser2ResponseDto MachineUser2(MachineUser dto)
+        {
+            
+
+
+            var result1 = (
+                from p in _context.ProductionEntries
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+                where m.MachineCode == dto.MachineCode && u.EmployeeId == dto.EmployeeId
+
+
+                select new MachineUser2ResponseDto
+                {
+
+                    OperatorID = u.Id,
+                    OperatorEID = u.EmployeeId,
+                    OperatorRole = u.Role,
+                    OperatorStatus = u.IsActive
+                }
+                ).FirstOrDefault();
+
+            return result1;
+
+
+
+        }
+
     }
 }

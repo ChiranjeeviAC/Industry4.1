@@ -1,14 +1,16 @@
-﻿namespace Industry4._1.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Industry4._1.DTOs
 {
     public class ProductionCreateDto
     {
-        public int MachineId { get; set; }
+        public string MachineCode { get; set; }
 
         public string JobId { get; set; }
-        public int ShiftId { get; set; }
+        public string ShiftName { get; set; }
 
 
-        public int UserId { get; set; }
+        public string UserEmployeeId { get; set; }
 
 
         public int OkParts { get; set; }
@@ -32,7 +34,7 @@
 
     public class TotalOKCountFromMachineResponse
     {
-        public int machineId { get; set; }
+        public string MachineCode { get; set; }
         public int TotalOkParts {  get; set; }
         public int TotalNcParts {  get; set; }
         public int TotalProduction {  get; set; }
@@ -40,7 +42,7 @@
 
     public class TotalOKCountFromMachinedateResponse
     {
-        public int machineId { get; set; }
+        public string MachineCode { get; set; }
         public int TotalOkParts { get; set; }
         public int TotalNcParts { get; set; }
         public int TotalProduction { get; set; }
@@ -58,5 +60,92 @@
         public int TotalParts { get; set; }
 
     }
+    public class operatorperformanceDto
+    {
+        public string EmployeeId { get; set; }
+        public int TotalOKParts { get; set; }
+        public int TotalNCParts { get; set; }
+        public int TotalParts { get; set; }
+        
+        public double Performance {  get; set; }
+    }
 
+    public class UpdateProductionDto
+    {
+        public string JobId { get; set; }
+        public string MachineCode { get; set; }
+        public string ShiftName { get; set; }
+        public string UserEmployeeId { get; set; }
+        public int OkParts { get; set; }
+        public int NcParts { get; set; }
+        public DateTime EntryTime { get; set; }
+    }
+
+    public class resultResponseDto
+    {
+        public string ShiftName { get; set; }
+        public string MachineName { get; set; }
+        public string EmployeeID {  get; set; }
+
+        public int TotalOKParts { get; set; }
+        public int TotalNCParts { get; set; }
+        public int TotalParts { get; set; }
+
+        public double Performance { get; set; }
+    }
+
+    public class dailyResponseDto
+    {
+        public DateTime Date {  get; set; }
+        public int TotalOkParts { get; set; }
+        public int TotalNcParts { get; set; }
+        public int TotalProduction { get; set; }
+       
+    }
+
+    public class TopMachineResponseDto
+    {
+        public string MachineCode { get; set; }
+        public string MachineName { get; set; }
+        public int TotalProduction { get; set; }
+    }
+
+    public class GetMachineandUserProduction
+    {
+        public string MachineCode { get; set; }
+        public string EmployeeId { get; set; }
+        public DateTime from { get; set; }
+        public DateTime to { get; set; }
+    }
+
+    public class ProductionbyMachineUserPerCycleResponseDto
+    {
+        public string MachineCode { get; set; }
+        public string EmployeeId { get; set; }
+        public DateTime fromDate { get; set; }
+        public DateTime toDate { get; set; }
+        public int TotalOkParts { get; set; }
+        public int TotalNcParts { get; set; }
+        public int TotalProduction { get; set; }
+    }
+
+    public class MachineUser
+    {
+        public string MachineCode { get; set; }
+        public string EmployeeId { get; set; }
+    }
+
+    public class MachineUser1ResponseDto
+    {
+        public  string OperatorID {  get; set; }
+    }
+
+    public class MachineUser2ResponseDto
+    {
+        public int OperatorID { get; set; }
+        public string OperatorEID { get; set; }
+        public string OperatorRole { get; set; }
+
+        public bool OperatorStatus { get; set; }
+    }
 }

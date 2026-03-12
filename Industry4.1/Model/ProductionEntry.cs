@@ -7,9 +7,9 @@ namespace Industry4._1.Model
         [Key]
         public int Id { get; set; }
         public string JobId { get; set; }
-        public int MachineId { get; set; }
-        public int ShiftId { get; set; }
-        public int UserId { get; set; }
+        public string MachineCode { get; set; }
+        public string ShiftName { get; set; }
+        public string UserEmployeeId { get; set; }
         public int OkParts { get; set; }
         public int NcParts { get; set; }
         public DateTime EntryTime { get; set; }
