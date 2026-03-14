@@ -53,12 +53,19 @@ namespace Industry4._1.DTOs
 
     public class machinesummaryResponse
     {
-        public string MachineCode { get; set; }
-        public string MachineName { get; set; }
-        public int TotalOKParts { get; set; }
-        public int TotalNCParts { get; set; }
-        public int TotalParts { get; set; }
+        public string Machine { get; set; }
+        
+        public int TotalOkParts { get; set; }
+        public int TotalNcParts { get; set; }
+        public int TotalProduction { get; set; }
 
+    }
+    public class MachineSummaryDto
+    {
+        public string Machine { get; set; }
+        public int TotalOkParts { get; set; }
+        public int TotalNcParts { get; set; }
+        public int TotalProduction { get; set; }
     }
     public class operatorperformanceDto
     {
@@ -70,6 +77,13 @@ namespace Industry4._1.DTOs
         public double Performance {  get; set; }
     }
 
+
+    public class operatorperformanceDto1
+    {
+        public string user { get; set; }
+        public int totalOkParts { get; set; }
+       
+    }
     public class UpdateProductionDto
     {
         public string JobId { get; set; }
@@ -83,20 +97,20 @@ namespace Industry4._1.DTOs
 
     public class resultResponseDto
     {
-        public string ShiftName { get; set; }
-        public string MachineName { get; set; }
-        public string EmployeeID {  get; set; }
+        public string shift { get; set; }
+        //public string MachineName { get; set; }
+        //public string EmployeeID {  get; set; }
 
-        public int TotalOKParts { get; set; }
-        public int TotalNCParts { get; set; }
-        public int TotalParts { get; set; }
+        public int totalOk { get; set; }
+        public int totalNc { get; set; }
+        //public int TotalParts { get; set; }
 
-        public double Performance { get; set; }
+        //public double Performance { get; set; }
     }
 
     public class dailyResponseDto
     {
-        public DateTime Date {  get; set; }
+        public DateOnly Date {  get; set; }
         public int TotalOkParts { get; set; }
         public int TotalNcParts { get; set; }
         public int TotalProduction { get; set; }
@@ -106,7 +120,7 @@ namespace Industry4._1.DTOs
     public class TopMachineResponseDto
     {
         public string MachineCode { get; set; }
-        public string MachineName { get; set; }
+       
         public int TotalProduction { get; set; }
     }
 

@@ -26,26 +26,22 @@ namespace Industry4._1.Controllers
 
             var ProdEntryAlredy = _productionservice.ProductinAlreadypresent(dto.JobId);
 
-            if (ProdEntryAlredy == false)
+            if (ProdEntryAlredy != null)
             {
                 return BadRequest(new
                 {
                     Status = false,
-                    Message = "Production entry aleardy present",
-
-                }
-                    );
+                    Message = "Production entry already present"
+                });
             }
 
             var machine = _productionservice.checkMachine(dto.MachineCode);
-            if (machine == true)
+            if (machine == null)
                 return BadRequest("Invalid Machine");
 
-
-            var shift = _productionservice.checkMachine(dto.ShiftName);
+            var shift = _productionservice.checkShift(dto.ShiftName);
             if (shift == null)
                 return BadRequest("Invalid Shift");
-
 
             var user = _productionservice.checkUser(dto.UserEmployeeId);
             if (user == null)
@@ -75,12 +71,12 @@ namespace Industry4._1.Controllers
         }
 
 
-        [HttpGet("Shift/{ShiftName}")]
+        [HttpGet("Shift/{shiftName}")]
         public IActionResult GetByShift(string shiftName)
         {
             var result = _productionservice.GetByShift(shiftName);
 
-            if (result == null)
+            if (result.Count == 0)
             {
                 return BadRequest(new
                 {
@@ -142,6 +138,18 @@ namespace Industry4._1.Controllers
         [HttpPatch("UpdateProductionEntry")]
         public IActionResult UpdateProductionEntry(UpdateProductionDto dto)
         {
+            var machine = _productionservice.checkMachine(dto.MachineCode);
+            if (machine == null)
+                return BadRequest("Invalid Machine");
+
+            var shift = _productionservice.checkShift(dto.ShiftName);
+            if (shift == null)
+                return BadRequest("Invalid Shift");
+
+            var user = _productionservice.checkUser(dto.UserEmployeeId);
+            if (user == null)
+                return BadRequest("Invalid User");
+
             var res = _productionservice.UpdateProduction(dto);
             if (res == null)
             {
@@ -185,6 +193,10 @@ namespace Industry4._1.Controllers
         public IActionResult TotalOKCountFromMachine(string machineCode)
         {
             var totalOk = _productionservice.TotalOKCountFromMachine(machineCode);
+            if (totalOk == null) return NotFound(new {
+                Status = false,
+                message = "Production Not Found for this machine"
+            });
 
             return Ok(new
             {
@@ -198,7 +210,11 @@ namespace Industry4._1.Controllers
         public IActionResult TotalOKCountFromMachinedate(string machineCode, DateTime from, DateTime to)
         {
             var production = _productionservice.TotalOKCountFromMachinedate(machineCode, from, to);
-
+            if (production == null) return NotFound(new
+            {
+                Status = false,
+                message = "Production Not Found for this machine for this cycle"
+            });
             return Ok(new
             {
                 Status = true,
@@ -207,12 +223,30 @@ namespace Industry4._1.Controllers
             });
         }
 
-        [HttpGet("machine-summary")]
-        public IActionResult machinesummary()
-        {
-            var result = _productionservice.machinesummary();
+        //[HttpGet("machine-summary")]
+        //public IActionResult machinesummary()
+        //{
+        //    var result = _productionservice.machinesummary();
 
-            if (result.Count == 0)
+        //    if (result.Count == 0)
+        //    {
+        //        return NoContent();
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        Status = true,
+        //        Message = "Details of Production According to Machine",
+        //        Data = result
+        //    });
+        //}
+
+        [HttpGet("machine-summary")]
+        public IActionResult machinesummary1()
+        {
+            var result = _productionservice.machinesummary1();
+
+            if (result == null || !result.Any())
             {
                 return NoContent();
             }
@@ -247,13 +281,35 @@ namespace Industry4._1.Controllers
 
 
 
-        [HttpGet("shift-report/{shiftId}")]
-        public IActionResult ShiftReport(string shiftName)
+        [HttpGet("operator-ranking")]
+        public IActionResult operatorRanking()
         {
-            var result = _productionservice.ShiftReport(shiftName);
+            var result = _productionservice.operatorperformance1();
 
-            if (!result.Any())
-                return NoContent();
+
+           
+            return Ok(new
+            {
+                Status = true,
+                Message = "Top Operator",
+                Data = result
+            });
+        }
+
+
+
+        [HttpGet("shift-summary")]
+        public IActionResult ShiftReport()
+        {
+            var result = _productionservice.ShiftReport();
+
+            if (result== null)
+                return BadRequest(new
+                {
+                    Status = false,
+                    message = "Production Not Found for this shiftName"
+
+                });
 
             return Ok(new
             {
@@ -263,23 +319,25 @@ namespace Industry4._1.Controllers
             });
         }
 
-        [HttpGet("daily")]
-        public IActionResult daily(DateTime date)
+        [HttpGet("daily-report")]
+        public IActionResult DailyReport(DateOnly date)
         {
+            var result = _productionservice.daily(date);
 
-
-            var production = _productionservice.daily( date);
-
-            if (production == null)
+            if (result == null)
             {
-                return NoContent();
+                return BadRequest(new
+                {
+                    Status = true,
+                    Message = "No Daily Production "
+                });
             }
 
             return Ok(new
             {
                 Status = true,
-                Message = "Details of Production According to Specific Date",
-                Data = production
+                Message = "Daily Production Report",
+                Data = result
             });
         }
 
@@ -312,7 +370,12 @@ namespace Industry4._1.Controllers
 
             if (production == null)
             {
-                return NotFound();
+                return BadRequest(new
+                {
+                    Status = false,
+                    message = "Production Not Found"
+
+                });
             }
 
             return Ok(new

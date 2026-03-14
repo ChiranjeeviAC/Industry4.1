@@ -5,15 +5,17 @@ namespace Industry4._1.Interfaces
 {
     public interface IProductionService
     {
-        public Boolean ProductinAlreadypresent(string JobId);
-        public Boolean checkMachine(string MachineCode);
-        public Boolean checkShift(string ShiftName);
-        public Boolean checkUser(string EmployeeId);
+        public ProductionEntry ProductinAlreadypresent(string JobId);
+        public Machine checkMachine(string MachineCode);
+        public List<MachineSummaryDto> machinesummary1();
+        public Shift checkShift(string ShiftName);
+        public AppUser checkUser(string EmployeeId);
         public ProductionEntry AddProduction(ProductionCreateDto dto);
         public List<ProductionResponseDto> Get();
-        public List<ProductionEntry> GetByShift(string shiftName);
+        public List<ProductionResponseDto> GetByShift(string shiftName);
 
-        
+
+
         public ProductionEntry GetByProductId(int PrudID);
         public ProductionEntry DeleteProduction(string jobId);
         public int TotalOKCount();
@@ -24,8 +26,9 @@ namespace Industry4._1.Interfaces
         public List<machinesummaryResponse> machinesummary();
         public List<operatorperformanceDto> operatorperformance();
         public ProductionEntry UpdateProduction(UpdateProductionDto dto);
-        public List<resultResponseDto> ShiftReport(string shiftName);
-        public dailyResponseDto daily(DateTime date);
+        public List<resultResponseDto> ShiftReport();
+        public operatorperformanceDto1 operatorperformance1();
+        public dailyResponseDto daily(DateOnly date);
         public TopMachineResponseDto TopMachine();
         public ProductionbyMachineUserPerCycleResponseDto ProductionbyMachineUserPerCycle(GetMachineandUserProduction dto);
         public List<MachineUser1ResponseDto> MachineUser1(MachineUser dto);
