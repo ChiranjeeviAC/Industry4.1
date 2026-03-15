@@ -215,7 +215,31 @@ namespace Industry4._1.Services
             });
         }
 
-        
+
+        public TotalOKCountFromMachineAndEmployeedateResponse TotalOKCountFromMachineAndEmployeedate(TotalOKCountFromMachineAndEmployeedateDto dto)
+        {
+            var production = _context.ProductionEntries
+        .Where(p => p.MachineCode == dto.MachineCode
+        && p.UserEmployeeId == dto.EmployeeId
+        && p.EntryTime >= dto.fromDate
+        && p.EntryTime <= dto.toDate)
+        .ToList();
+            if (production.Count == 0) return null;
+
+            var totalokM = production.Sum(p => p.OkParts);
+            var totalncM = production.Sum(p => p.NcParts);
+            return (new TotalOKCountFromMachineAndEmployeedateResponse
+            {
+                EmployeeId = dto.EmployeeId,
+                MachineCode = dto.MachineCode,
+                fromDate = dto.fromDate,
+                toDate = dto.toDate,
+                TotalOkParts = totalokM,
+                TotalNcParts = totalncM,
+                TotalProduction = totalokM + totalncM
+            });
+        }
+
         public List<machinesummaryResponse> machinesummary()
         {
             var result = (

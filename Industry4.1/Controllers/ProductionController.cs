@@ -223,6 +223,23 @@ namespace Industry4._1.Controllers
             });
         }
 
+        [HttpGet("TotalOkNcCountFromMachineAndEmployeeFromTodate")]
+        public IActionResult TotalOkNcCountFromMachineAndEmployeeFromTodate(TotalOKCountFromMachineAndEmployeedateDto dto)
+        {
+            var production = _productionservice.TotalOKCountFromMachineAndEmployeedate(dto);
+            if (production == null) return NotFound(new
+            {
+                Status = false,
+                message = "Production Not Found for this machine and Employee for given cycle"
+            });
+            return Ok(new
+            {
+                Status = true,
+                message = "Total Ok & Nc Counts of Machine & Employee from specific Date to  specific Date fetched Secussfully",
+                data = production
+            });
+        }
+
         //[HttpGet("machine-summary")]
         //public IActionResult machinesummary()
         //{
