@@ -8,6 +8,7 @@ namespace Industry4._1.Interfaces
     public interface IMachineService
     {
         public List<Machine> GetAllMachines();
+        public List<GetAllMachinesStatusResponseDto> GetAllMachinesStatus();
         public Machine GetMachineById(int id);
 
         public Machine CreateMachine(MachineDTO machinedto);

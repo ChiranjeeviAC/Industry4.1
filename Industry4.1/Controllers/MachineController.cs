@@ -42,6 +42,19 @@ namespace Industry4._1.Controllers
             });
         }
 
+
+        [HttpGet("GetAllMachinesStatus")]
+        public IActionResult GetAllMachinesStatus()
+        {
+            var res = _machineservice.GetAllMachinesStatus();
+            return Ok(new
+            {
+                Status = true,
+                Message = "Machines status data fetch seccusfully ",
+                data = res
+            });
+        }
+
         [HttpGet("GetCode")]
         public IActionResult GetCode()
         {

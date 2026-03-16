@@ -40,6 +40,18 @@ namespace Industry4._1.Services
             return machines;
 
         }
+        public List<GetAllMachinesStatusResponseDto> GetAllMachinesStatus()
+        {
+            var machines = _context.Machines
+                .Select(m => new GetAllMachinesStatusResponseDto
+                {
+                    Id = m.Id,
+                    MachineCode= m.MachineCode,
+                    IsActive= m.IsActive
+                }).ToList();
+            return (machines);
+
+        }
 
         public List<MachineCodeDto> GetAllMachinesCode()
         {
