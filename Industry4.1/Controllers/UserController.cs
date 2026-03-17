@@ -61,6 +61,18 @@ namespace Industry4._1.Controllers
             });
         }
 
+        [HttpGet("GetAllUsersStatus")]
+        public IActionResult GetAllUsersStatus()
+        {
+            var result = _userservice.GetAllUsersStatus();
+            return Ok(new
+            {
+                Status = true,
+                Message = "User Status  fetch seccusfully",
+                Data = result
+            });
+        }
+
         [HttpGet("GetById{employeeId}")]
         public IActionResult GetById(string employeeId)
         {

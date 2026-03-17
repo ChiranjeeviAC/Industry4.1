@@ -109,7 +109,22 @@ namespace Industry4._1.Services
             return users;
         }
 
-        
+        public List<GetAllUsersStatusDto> GetAllUsersStatus()
+        {
+            var users = _context.AppUsers
+                .Select(u => new GetAllUsersStatusDto
+                {
+                    
+                    EmployeeId = u.EmployeeId,
+                    
+                    IsActive = u.IsActive
+                })
+                .ToList();
+
+            return users;
+        }
+
+
         public AppUser Get(string employeeId)
         {
             var user = _context.AppUsers

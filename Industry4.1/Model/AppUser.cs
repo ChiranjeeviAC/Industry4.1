@@ -11,4 +11,14 @@ namespace Industry4._1.Model
         public string Role { get; set; }
         public bool IsActive { get; set; }
     }
+
+
+    public class GetAllUsersStatusDto
+    {
+        
+        public string EmployeeId { get; set; }
+
+       
+        public bool IsActive { get; set; }
+    }
 }
