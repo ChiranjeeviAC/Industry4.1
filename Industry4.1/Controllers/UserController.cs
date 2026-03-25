@@ -68,7 +68,7 @@ namespace Industry4._1.Controllers
             return Ok(new
             {
                 Status = true,
-                Message = "User Status  fetch seccusfully",
+                Message = "User Status   fetch seccusfully",
                 Data = result
             });
         }

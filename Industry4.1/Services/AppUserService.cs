@@ -1,4 +1,5 @@
 ﻿using Industry4._1.Data;
+using Industry4._1.DTOs;
 using Industry4._1.DTOs.AppUserDto;
 using Industry4._1.DTOs.LogicHandeling;
 using Industry4._1.Interfaces;
@@ -250,6 +251,20 @@ namespace Industry4._1.Services
 
         }
 
+        
+        public Shift UpdateShiftStartTime(UpdateShiftStartTime dto)
+        {
+            var shift = _context.Shifts.Where(s => s.Id == dto.Id).FirstOrDefault();
+            if (shift == null)
+            {
+                return null;
+            }
+
+            shift.StartTime = dto.StartTime;
+
+            _context.SaveChanges();
+            return shift;
+        }
     }
     }
 

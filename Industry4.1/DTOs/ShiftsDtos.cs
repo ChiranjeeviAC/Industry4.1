@@ -23,4 +23,10 @@
         
 
     }
+    public class UpdateShiftStartTime
+    {
+        public int Id { get; set; }
+
+        public TimeSpan StartTime { get; set; }
+    }
 }

@@ -139,5 +139,27 @@ namespace Industry4._1.Controllers
             var res = _shiftservice.GetShiftName();
             return Ok(res);
         }
+
+        [HttpPatch]
+        public IActionResult UpdateShiftStartTime(UpdateShiftStartTime dto)
+        {
+            var shift = _shiftservice.UpdateShiftStartTime(dto);
+            if (shift == null)
+            {
+                return BadRequest(new
+                {
+                    Status = false,
+                    Message = $"Shift not for id{dto.Id}"
+                });
+            }
+
+            
+            return Ok(new
+            {
+                Status = true,
+                Message = "Shift start time Updated secussfully",
+                Data = shift
+            });
+        }
     }
 }

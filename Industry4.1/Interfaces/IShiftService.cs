@@ -13,5 +13,6 @@ namespace Industry4._1.Interfaces
         public bool checkStartTime(TimeSpan StartTime, TimeSpan EndTime);
         public List<string> ShiftWithSchedule();
         public List<GetShiftNameResponse> GetShiftName();
+        public Shift UpdateShiftStartTime(UpdateShiftStartTime dto);
     }
 }
