@@ -14,7 +14,7 @@ namespace Industry4._1.Interfaces
         public AppUser UpdateUser(UpdateUserDto dto);
         public AppUser Delete(string employeeId);
         public List<AppUser> GetActiveUsers();
-        
+        public List<AppUser> GetUserByRole(string role);
         public List<GetAllUsersStatusDto> GetAllUsersStatus();
         public string ResetPassward(ResetPassward dto);
         public string ForgetPassward(ForgetPassward dto);

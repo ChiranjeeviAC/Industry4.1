@@ -212,5 +212,27 @@ namespace Industry4._1.Controllers
             });
 
         }
+
+        [HttpGet("GetUserByRole")]
+        public IActionResult GetUserByRole(string role)
+        {
+            var user = _userservice.GetUserByRole(role);
+                
+            if (user == null)
+            {
+                BadRequest(new
+                {
+                    Status = false,
+                    Message = $"Users not found for rolr {role}"
+                });
+            }
+
+            return Ok(new
+            {
+                Status = true,
+                Message = $"Users Featched Secussfully of role {role}",
+                Data = user
+            });
+        }
     }
 }

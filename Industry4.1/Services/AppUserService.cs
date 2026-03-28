@@ -265,6 +265,28 @@ namespace Industry4._1.Services
             _context.SaveChanges();
             return shift;
         }
+
+        public List<AppUser> GetUserByRole(string role)
+        {
+            var user = _context.AppUsers
+                .Where(x => x.Role == role)
+                .Select(m => new AppUser
+                {
+                    Id = m.Id,
+                    EmployeeId = m.EmployeeId,
+                    Role = m.Role,
+                    IsActive = m.IsActive
+                }).ToList();
+
+
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+
+        }
+
     }
     }
 
