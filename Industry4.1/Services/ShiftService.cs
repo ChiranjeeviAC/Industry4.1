@@ -130,5 +130,20 @@ namespace Industry4._1.Services
 
             return shifts;
         }
+
+
+        public Shift UpdateShiftStartTime(UpdateShiftStartTime dto)
+        {
+            var shift = _context.Shifts.Where(i => i.Id == dto.Id).FirstOrDefault();
+            if (shift == null)
+            {
+                return null;
+            }
+
+            shift.StartTime = dto.StartTime;
+            _context.SaveChanges();
+            return shift;
+
+        }
     }
 }
