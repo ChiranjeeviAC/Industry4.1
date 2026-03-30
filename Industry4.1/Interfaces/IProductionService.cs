@@ -25,6 +25,7 @@ namespace Industry4._1.Interfaces
         public TotalOKCountFromMachinedateResponse TotalOKCountFromMachinedate(string machineCode, DateTime from, DateTime to);
         public TotalOKCountFromMachineAndEmployeedateResponse TotalOKCountFromMachineAndEmployeedate(TotalOKCountFromMachineAndEmployeedateDto dto);
         public List<machinesummaryResponse> machinesummary();
+        public List<RoleSummaryResponseDto> RoleSummary();
         public List<operatorperformanceDto> operatorperformance();
         public ProductionEntry UpdateProduction(UpdateProductionDto dto);
         public List<resultResponseDto> ShiftReport();

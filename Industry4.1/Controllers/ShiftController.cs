@@ -140,7 +140,7 @@ namespace Industry4._1.Controllers
             return Ok(res);
         }
 
-        [HttpPatch]
+        [HttpPatch("UpdateShiftStartTime")]
         public IActionResult UpdateShiftStartTime(UpdateShiftStartTime dto)
         {
             var shift = _shiftservice.UpdateShiftStartTime(dto);

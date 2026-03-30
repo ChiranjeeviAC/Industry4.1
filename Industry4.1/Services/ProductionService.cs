@@ -5,6 +5,7 @@ using Industry4._1.Model;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 //using System.Reflection.PortableExecutable;
 
 namespace Industry4._1.Services
@@ -489,6 +490,30 @@ namespace Industry4._1.Services
 
 
 
+        }
+
+        public List<RoleSummaryResponseDto> RoleSummary()
+        {
+            var summary = (
+                from p in _context.ProductionEntries
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+                join s in _context.Shifts on p.ShiftName equals s.ShiftName
+                group p by new
+                {
+                    u.Role
+                }
+                into g 
+                select new RoleSummaryResponseDto
+                {
+                    Role = g.Key.Role,
+                    TotalOkParts = g.Sum(p => p.OkParts),
+                    TotalNcParts = g.Sum(p => p.NcParts),
+                    TotalProduction = g.Sum(p => p.OkParts) + g.Sum(p => p.NcParts)
+                }
+                ).ToList();
+
+            return summary;
         }
 
     }

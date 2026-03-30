@@ -451,5 +451,15 @@ namespace Industry4._1.Controllers
                 Data = result
             });
         }
+        [HttpGet("RoleSummary")]
+        public IActionResult RoleSummary()
+        {
+            var res = _productionservice.RoleSummary();
+            return Ok(new{
+                Status = true,
+                Message = "Production summary according to role",
+                Data = res
+            });
+        }
     }
 }
