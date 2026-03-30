@@ -461,5 +461,17 @@ namespace Industry4._1.Controllers
                 Data = res
             });
         }
+
+        [HttpGet("ShiftSummary")]
+        public IActionResult ShiftSummary()
+        {
+            var res = _productionservice.ShiftSummary();
+            return Ok(new
+            {
+                Status = true,
+                Message = "Shift summary according to role",
+                Data = res
+            });
+        }
     }
 }

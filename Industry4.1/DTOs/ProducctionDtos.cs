@@ -92,6 +92,16 @@ namespace Industry4._1.DTOs
         public int TotalProduction { get; set; }
 
     }
+
+    public class ShiftSummaryResponseDto
+    {
+        public string Shift { get; set; }
+
+        public int TotalOkParts { get; set; }
+        public int TotalNcParts { get; set; }
+        public int TotalProduction { get; set; }
+
+    }
     public class MachineSummaryDto
     {
         public string Machine { get; set; }

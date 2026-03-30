@@ -26,11 +26,14 @@ namespace Industry4._1.Interfaces
         public TotalOKCountFromMachineAndEmployeedateResponse TotalOKCountFromMachineAndEmployeedate(TotalOKCountFromMachineAndEmployeedateDto dto);
         public List<machinesummaryResponse> machinesummary();
         public List<RoleSummaryResponseDto> RoleSummary();
+        public List<ShiftSummaryResponseDto> ShiftSummary();
         public List<operatorperformanceDto> operatorperformance();
         public ProductionEntry UpdateProduction(UpdateProductionDto dto);
         public List<resultResponseDto> ShiftReport();
         public operatorperformanceDto1 operatorperformance1();
         public dailyResponseDto daily(DateOnly date);
+
+       
         public TopMachineResponseDto TopMachine();
         public ProductionbyMachineUserPerCycleResponseDto ProductionbyMachineUserPerCycle(GetMachineandUserProduction dto);
         public List<MachineUser1ResponseDto> MachineUser1(MachineUser dto);

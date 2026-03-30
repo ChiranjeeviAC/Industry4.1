@@ -516,5 +516,30 @@ namespace Industry4._1.Services
             return summary;
         }
 
+        public List<ShiftSummaryResponseDto> ShiftSummary()
+        {
+            var summary = (
+                from p in _context.ProductionEntries
+                join m in _context.Machines on p.MachineCode equals m.MachineCode
+                join u in _context.AppUsers on p.UserEmployeeId equals u.EmployeeId
+                join s in _context.Shifts on p.ShiftName equals s.ShiftName
+                group p by new
+                {
+                    s.ShiftName
+                }
+                into g
+                select new ShiftSummaryResponseDto
+                {
+                    Shift = g.Key.ShiftName,
+                    TotalOkParts = g.Sum(p => p.OkParts),
+                    TotalNcParts = g.Sum(p => p.NcParts),
+                    TotalProduction = g.Sum(p => p.OkParts) + g.Sum(p => p.NcParts)
+                }
+                ).ToList();
+
+            return summary;
+
+        }
+
     }
 }
