@@ -3,11 +3,13 @@ using Industry4._1.DTOs.LogicHandeling;
 using Industry4._1.DTOs.MachineDto;
 using Industry4._1.Interfaces;
 using Industry4._1.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Industry4._1.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MachineController : ControllerBase

@@ -9,7 +9,8 @@ namespace Industry4._1.Interfaces
     {
         public List<AppUser> GetAllUsers();
         public AppUser Register(RegisterUserModel user);
-        public AppUser Login(LoginModel model);
+        public object Login(LoginModel model);
+        public string GenerateJwtToken(AppUser appUser);
         public AppUser Get(string employeeId);
         public AppUser UpdateUser(UpdateUserDto dto);
         public AppUser Delete(string employeeId);

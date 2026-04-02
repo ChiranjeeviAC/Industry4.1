@@ -6,7 +6,11 @@ using Industry4._1.Interfaces;
 using Industry4._1.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Industry4._1.Services
 {
@@ -59,7 +63,7 @@ namespace Industry4._1.Services
     }
 
 
-        public AppUser Login(LoginModel model)
+        public object Login(LoginModel model)
         {
 
             var user = _context.AppUsers
@@ -91,10 +95,46 @@ namespace Industry4._1.Services
             {
                 return null;
             }
-            return user;
+            var token = GenerateJwtToken(user);
+
+            return new
+            {
+                success = true,
+                message = "Customer login successful",
+                token = token,
+                EmployeeID = user.EmployeeId,
+                
+            };
 
         }
-            
+
+
+
+        public string GenerateJwtToken(AppUser appUser)
+        {
+            var claims = new[]
+            {
+
+        new Claim(ClaimTypes.NameIdentifier, appUser.EmployeeId )
+    };
+
+            var key = new SymmetricSecurityKey(
+               Encoding.UTF8.GetBytes("THIS_IS_MY_SUPER_SECRET_KEY_12345_ABCDE")
+            );
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "IndustyAPI",
+                audience: "IndustryUsers",
+                claims: claims,
+                expires: DateTime.Now.AddHours(2),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         public List<AppUser> GetAllUsers()
         {
             var users = _context.AppUsers

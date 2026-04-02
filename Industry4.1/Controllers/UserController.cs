@@ -36,18 +36,21 @@ namespace Industry4._1.Controllers
         [HttpPost("Login")]
         public IActionResult Login(LoginModel model)
         {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = _userservice.Login(model);
 
-            if (result == null)
+            if( result == null)
             {
-                return Unauthorized("Invalid Employee ID or Password");
-            }
-            return Ok(new
-            {
-                Status = true,
-                Message = "Login successful",
-                Data = result
+                return Unauthorized(new
+                {
+                     success = false,
+                    message = "Invalid EmployeeId or password" 
             });
+            }
+            return Ok(result);
         }
         [HttpGet]
         public IActionResult GetAllUsers()
